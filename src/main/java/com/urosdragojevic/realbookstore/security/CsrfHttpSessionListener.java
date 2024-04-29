@@ -20,7 +20,7 @@ public class CsrfHttpSessionListener implements HttpSessionListener {
         SecureRandom secureRandom = new SecureRandom();
         byte[] token = new byte[16];
         secureRandom.nextBytes(token);
-        byte[] base64token = Base64.encodeBase64(token, false);
+        byte[] base64token = Base64.encodeBase64(token,false);
         return new String(base64token, StandardCharsets.UTF_8);
     }
 }

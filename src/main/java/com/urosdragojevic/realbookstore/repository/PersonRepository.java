@@ -2,11 +2,14 @@ package com.urosdragojevic.realbookstore.repository;
 
 import com.urosdragojevic.realbookstore.audit.AuditLogger;
 import com.urosdragojevic.realbookstore.domain.Person;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.sql.DataSource;
+import java.nio.file.AccessDeniedException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -86,7 +89,7 @@ public class PersonRepository {
         return new Person("" + id, firstName, lastName, email);
     }
 
-    public void update(Person personUpdate) {
+    public void update(Person personUpdate){
         Person personFromDb = get(personUpdate.getId());
         String query = "UPDATE persons SET firstName = ?, lastName = '" + personUpdate.getLastName() + "', email = ? where id = " + personUpdate.getId();
 
