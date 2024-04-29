@@ -5,6 +5,7 @@ import com.urosdragojevic.realbookstore.domain.Person;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -25,7 +26,7 @@ public class PersonRepository {
     public PersonRepository(DataSource dataSource) {
         this.dataSource = dataSource;
     }
-
+    @PreAuthorize("hasAuthority('VIEW_PERSONS_LIST')")
     public List<Person> getAll() {
         List<Person> personList = new ArrayList<>();
         String query = "SELECT id, firstName, lastName, email FROM persons";
@@ -54,7 +55,6 @@ public class PersonRepository {
         }
         return personList;
     }
-
     public Person get(String personId) {
         String query = "SELECT id, firstName, lastName, email FROM persons WHERE id = " + personId;
         try (Connection connection = dataSource.getConnection();

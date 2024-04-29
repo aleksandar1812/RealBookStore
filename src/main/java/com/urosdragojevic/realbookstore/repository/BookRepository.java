@@ -6,6 +6,7 @@ import com.urosdragojevic.realbookstore.domain.Genre;
 import com.urosdragojevic.realbookstore.domain.NewBook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -24,7 +25,7 @@ public class BookRepository {
     public BookRepository(DataSource dataSource) {
         this.dataSource = dataSource;
     }
-
+    @PreAuthorize("hasAuthority('VIEW_BOOKS_LIST')")
     public List<Book> getAll() {
         List<Book> bookList = new ArrayList<>();
         String query = "SELECT id, title, description, author FROM books";
@@ -71,7 +72,7 @@ public class BookRepository {
         }
         return null;
     }
-
+    @PreAuthorize("hasAuthority('CREATE_BOOK')")
     public long create(NewBook book, List<Genre> genresToInsert) {
         String query = "INSERT INTO books(title, description, author) VALUES(?, ?, ?)";
         long id = 0;

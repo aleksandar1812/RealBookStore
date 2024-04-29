@@ -3,6 +3,7 @@ package com.urosdragojevic.realbookstore.repository;
 import com.urosdragojevic.realbookstore.domain.Comment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -21,7 +22,7 @@ public class CommentRepository {
     public CommentRepository(DataSource dataSource) {
         this.dataSource = dataSource;
     }
-
+    @PreAuthorize("hasAuthority('ADD_COMMENT')")
     public void create(Comment comment) {
         String query = "insert into comments(bookId, userId, comment) values (" + comment.getBookId() + ", " + comment.getUserId() + ", ?)";
         var input = comment.getComment();

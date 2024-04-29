@@ -42,7 +42,7 @@
       </tr>
       </tbody>
     </table>
-    <a href="/create-form">Add book</a>
+    <a sec:authorize="hasAuthority('CREATE_BOOK')" href="/create-form">Add book</a>
   </div>
   <template id="row-template">
     <tr>

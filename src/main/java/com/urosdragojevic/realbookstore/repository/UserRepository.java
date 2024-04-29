@@ -3,6 +3,7 @@ package com.urosdragojevic.realbookstore.repository;
 import com.urosdragojevic.realbookstore.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -22,6 +23,7 @@ public class UserRepository {
         this.dataSource = dataSource;
     }
 
+    @PreAuthorize("hasAuthority('VIEW_PERSON')")
     public User findUser(String username) {
         String query = "SELECT id, username, password FROM users WHERE username='" + username + "'";
         try (Connection connection = dataSource.getConnection();

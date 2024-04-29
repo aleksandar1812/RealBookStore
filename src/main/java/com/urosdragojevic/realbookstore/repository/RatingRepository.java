@@ -3,6 +3,7 @@ package com.urosdragojevic.realbookstore.repository;
 import com.urosdragojevic.realbookstore.domain.Rating;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -20,6 +21,7 @@ public class RatingRepository {
         this.dataSource = dataSource;
     }
 
+    @PreAuthorize("hasAuthority('RATE_BOOK')")
     public void createOrUpdate(Rating rating) {
         String query = "SELECT bookId, userId, rating FROM ratings WHERE bookId = " + rating.getBookId() + " AND userID = " + rating.getUserId();
         String query2 = "update ratings SET rating = ? WHERE bookId = ? AND userId = ?";
