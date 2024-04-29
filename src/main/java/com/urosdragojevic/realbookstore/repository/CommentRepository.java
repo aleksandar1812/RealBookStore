@@ -30,7 +30,7 @@ public class CommentRepository {
              PreparedStatement statement = connection.prepareStatement(query);
         ) {
             statement.setString(1,input);
-            statement.execute(query);
+            statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
