@@ -23,7 +23,7 @@ public class UserRepository {
         this.dataSource = dataSource;
     }
 
-    @PreAuthorize("hasAuthority('VIEW_PERSON')")
+
     public User findUser(String username) {
         String query = "SELECT id, username, password FROM users WHERE username='" + username + "'";
         try (Connection connection = dataSource.getConnection();

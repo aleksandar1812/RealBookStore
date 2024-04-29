@@ -26,7 +26,7 @@ public class PersonRepository {
     public PersonRepository(DataSource dataSource) {
         this.dataSource = dataSource;
     }
-    @PreAuthorize("hasAuthority('VIEW_PERSONS_LIST')")
+
     public List<Person> getAll() {
         List<Person> personList = new ArrayList<>();
         String query = "SELECT id, firstName, lastName, email FROM persons";

@@ -21,7 +21,7 @@ public class RatingRepository {
         this.dataSource = dataSource;
     }
 
-    @PreAuthorize("hasAuthority('RATE_BOOK')")
+
     public void createOrUpdate(Rating rating) {
         String query = "SELECT bookId, userId, rating FROM ratings WHERE bookId = " + rating.getBookId() + " AND userID = " + rating.getUserId();
         String query2 = "update ratings SET rating = ? WHERE bookId = ? AND userId = ?";

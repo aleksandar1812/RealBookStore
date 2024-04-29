@@ -25,7 +25,7 @@ public class BookRepository {
     public BookRepository(DataSource dataSource) {
         this.dataSource = dataSource;
     }
-    @PreAuthorize("hasAuthority('VIEW_BOOKS_LIST')")
+
     public List<Book> getAll() {
         List<Book> bookList = new ArrayList<>();
         String query = "SELECT id, title, description, author FROM books";
@@ -72,7 +72,7 @@ public class BookRepository {
         }
         return null;
     }
-    @PreAuthorize("hasAuthority('CREATE_BOOK')")
+
     public long create(NewBook book, List<Genre> genresToInsert) {
         String query = "INSERT INTO books(title, description, author) VALUES(?, ?, ?)";
         long id = 0;
