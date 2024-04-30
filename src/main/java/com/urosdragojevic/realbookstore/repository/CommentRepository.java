@@ -17,6 +17,7 @@ public class CommentRepository {
     private static final Logger LOG = LoggerFactory.getLogger(CommentRepository.class);
 
 
+
     private DataSource dataSource;
 
     public CommentRepository(DataSource dataSource) {
@@ -34,6 +35,7 @@ public class CommentRepository {
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+            LOG.warn("Failed to add a comment");
         }
     }
 
@@ -48,6 +50,7 @@ public class CommentRepository {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            LOG.warn("Failed to retrieve the comments from the database");
         }
         return commentList;
     }

@@ -37,6 +37,7 @@ public class RoleRepository {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            LOG.error("Failed to load role for user with id = " + userId);
         }
         return roles;
     }

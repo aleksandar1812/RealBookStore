@@ -36,6 +36,7 @@ public class GenreRepository {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            LOG.error("Failed to load genres from the genres table");
         }
         return genreList;
     }
@@ -51,6 +52,7 @@ public class GenreRepository {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            LOG.error("Failed to load genres for a book from the database");
         }
         return genreList;
     }

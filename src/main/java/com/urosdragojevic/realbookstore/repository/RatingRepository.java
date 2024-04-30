@@ -48,6 +48,7 @@ public class RatingRepository {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            LOG.error("Failed to create or update in the ratings table");
         }
     }
 
@@ -62,6 +63,7 @@ public class RatingRepository {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            LOG.error("Failed to retrieve ratings from the ratings table");
         }
         return ratingList;
     }
