@@ -2,15 +2,21 @@ package com.urosdragojevic.realbookstore.controller;
 
 import com.urosdragojevic.realbookstore.audit.AuditLogger;
 import com.urosdragojevic.realbookstore.domain.Person;
+import com.urosdragojevic.realbookstore.domain.Role;
 import com.urosdragojevic.realbookstore.domain.User;
 import com.urosdragojevic.realbookstore.repository.PersonRepository;
+import com.urosdragojevic.realbookstore.repository.RoleRepository;
 import com.urosdragojevic.realbookstore.repository.UserRepository;
+import com.urosdragojevic.realbookstore.security.PermissionService;
+import com.urosdragojevic.realbookstore.security.UserDetailsServiceImpl;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import java.nio.file.AccessDeniedException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Locale;
 
 @Controller
 public class PersonsController {
@@ -61,11 +68,28 @@ public class PersonsController {
     }
 
     @PostMapping("/update-person")
+    @PreAuthorize("hasAuthority('UPDATE_PERSON')")
     public String updatePerson(Person person, HttpSession session, @RequestParam("csrfToken") String token) throws
-            AccessDeniedException {
+            AccessDeniedException, SQLException {
         String csrf = session.getAttribute("CSRF_TOKEN").toString();
         if(!csrf.equals(token)){
             throw new AccessDeniedException("Forbidden");
+        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        var poredi =  authentication.getPrincipal();
+        if(!(poredi instanceof UserDetails)){
+            throw new AccessDeniedException("Nije person klasa");
+        }
+        var logovan = (UserDetails) poredi;
+        var osoba = (personRepository.search(logovan.getUsername())).get(0);
+
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("VIEW_PERSON"));
+
+        System.out.println(authentication.getAuthorities().stream().map(x-> x.getAuthority()).toList());
+        if (!(isAdmin || person.getId().equals(osoba.getId()))) {
+            throw new AccessDeniedException("You are not authorized to update this person's data.");
         }
         personRepository.update(person);
         return "redirect:/persons/" + person.getId();
