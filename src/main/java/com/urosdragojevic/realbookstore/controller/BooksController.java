@@ -4,10 +4,14 @@ import com.urosdragojevic.realbookstore.domain.*;
 import com.urosdragojevic.realbookstore.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +43,7 @@ public class BooksController {
     }
 
     @GetMapping("/books/{id}")
+    @PreAuthorize("hasAuthority('CREATE_BOOKS')")
     public String book(Model model, @PathVariable int id) {
 
         Book book = bookRepository.get(id);
@@ -70,6 +75,7 @@ public class BooksController {
     }
 
     @GetMapping("/create-form")
+    @PreAuthorize("hasAuthority('CREATE_BOOKS')")
     public String CreateForm(Model model) {
         model.addAttribute("genres", genreRepository.getAll());
         return "create-form";
@@ -84,7 +90,27 @@ public class BooksController {
 
     @PostMapping("/books")
     @PreAuthorize("hasAuthority('CREATE_BOOKS')")
-    public String createBook(NewBook book) {
+    public String createBook(NewBook book) throws AccessDeniedException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        var poredi =  authentication.getPrincipal();
+        if(!(poredi instanceof UserDetails)){
+            try {
+                throw new AccessDeniedException("Nije person klasa");
+            } catch (AccessDeniedException e) {
+                e.printStackTrace();
+            }
+        }
+        var logovan = (UserDetails) poredi;
+        try {
+            var osoba = (personRepository.search(logovan.getUsername())).get(0);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        boolean isAllowed = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("CREATE_BOOK"));
+        if (!isAllowed){
+            throw new AccessDeniedException("Forbidden");
+        }
         List<Genre> genreList = this.genreRepository.getAll();
         List<Genre> genresToInsert = book.getGenres().stream().map(bookGenreId -> genreList.stream().filter(genre -> genre.getId() == bookGenreId).findFirst().get()).collect(Collectors.toList());
         long id = bookRepository.create(book, genresToInsert);
